@@ -75,6 +75,7 @@ const createPlace = async (req, res, next) => {
   let coordinates;
   try {
     coordinates = await getCoordsForAddress(address);
+    console.log("from inside controller", coordinates);
   } catch (error) {
     return next(error);
   }
@@ -104,7 +105,8 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  console.log(user);
+  console.log("userr",user);
+  console.log("placee",createdPlace);
 
   try {
     const sess = await mongoose.startSession();
@@ -114,13 +116,14 @@ const createPlace = async (req, res, next) => {
     await user.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
+    console.log("error h", err);
     const error = new HttpError(
-      'Creating place failed, please try again.',
+      'Creating place faileed, please try again.',
       500
     );
     return next(error);
   }
-
+  console.log("created place");
   res.status(201).json({ place: createdPlace });
 };
 

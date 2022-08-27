@@ -49,11 +49,13 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    `mongodb+srv://admin-aryaman:april202018@cluster0.szu6rmx.mongodb.net/?retryWrites=true&w=majority`
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.szu6rmx.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    app.listen(5000);
+    app.listen(process.env.PORT || 5000);
+    console.log("server run successful");
   })
   .catch(err => {
+    console.log(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.szu6rmx.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`);
     console.log(err);
   });

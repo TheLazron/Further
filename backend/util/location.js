@@ -1,29 +1,31 @@
 const axios = require('axios');
-const geocoder = require('geocoder');
+const opencage = require('opencage-api-client');
 
 const HttpError = require('../models/http-error');
 
+
 async function getCoordsForAddress(address) {
-  
- const cords =  geocoder.geocode(address, function (err, response) {
 
-    const data = response.data;
+  const cords=opencage.geocode({q: address})
+  .then(data=>{
+    if(data.results.length>0){
+      const place = data.results[0];
+      console.log(place.formatted);
+      console.log(place.geometry);
+      console.log(place.annotations.timezone.name);
+      return {lat:place.geometry.lat,lng:place.geometry.lng};
 
-    if (!data || data.status === 'ZERO_RESULTS') {
-      const error = new HttpError(
-        'Could not find location for the specified address.',
-        422
-      );
-      throw error;
+    } else {
+      console.log('Status', data.status.message);
+      console.log('total_results', data.total_results);
     }
-    
-  const coordinates = data.results[0].geometry.location;
-
-  return coordinates;
   
+  }).catch((err)=>{
+    console.log('Error', err.message);
   })
-
+  console.log("cords", cords);
   return cords;
+
 }
 
 module.exports = getCoordsForAddress;
